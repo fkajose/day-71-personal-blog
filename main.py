@@ -3,7 +3,6 @@ from typing import List
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
 from flask_bootstrap import Bootstrap5
 from flask_ckeditor import CKEditor
-from flask_gravatar import Gravatar
 from flask_login import (
     UserMixin,
     login_user,
@@ -21,20 +20,16 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
 from forms import CommentForm, CreatePostForm, RegisterForm, LoginForm
 
-from flask_gravatar import Gravatar
+import hashlib
 import os
 
+
 # For adding profile images to the comment section
-gravatar = Gravatar(
-    app,
-    size=100,
-    rating="g",
-    default="retro",
-    force_default=False,
-    force_lower=False,
-    use_ssl=False,
-    base_url=None,
-)
+def gravatar_url(email, size=100):
+    email = email.strip().lower()
+    digest = hashlib.md5(email.encode()).hexdigest()
+    return f"https://www.gravatar.com/avatar/{digest}?s={size}&d=identicon"
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_KEY")
